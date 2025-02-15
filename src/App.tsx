@@ -1,6 +1,17 @@
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 import './App.css'
 
 function App() {
+  const [currencies, setCurrencies] = useState([])
+  // const [currencyOne, setCurrencyOne] = useState()
+
+  useEffect(() => {
+    axios.get(`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json`)
+    .then(result => {
+      setCurrencies(result.data)
+  })
+  }, [])
 
   return (
     <main className='flex flex-col items-center justify-center gap-8 min-h-svh bg-linear-to-br from-sky-500 to-indigo-500'>
@@ -12,8 +23,15 @@ function App() {
         <form>
           <h2 className='text-xs'>Amount</h2>
           <div className='border-2 border-solid border-gray-400 rounded-sm p-1'>
-            <select className='text-sm'>
-              <option value="BRL">BRL</option>
+            <select className='text-sm uppercase outline-none'>
+              {
+                currencies > [] ?
+                Object.keys(currencies).map((currency) => (
+                  <option value={currency} className='uppercase'>{currency}</option>
+                ))
+                :
+                <></>
+              }
             </select>
             <input type="number" className='outline-none' />
           </div>
@@ -22,8 +40,15 @@ function App() {
         <form>
           <h2 className='text-xs'>Converted To</h2>
           <div className='border-2 border-solid border-gray-400 rounded-sm p-1'>
-            <select className='text-sm'>
-              <option value="BRL">BRL</option>
+          <select className='text-sm uppercase outline-none'>
+              {
+                currencies > [] ?
+                Object.keys(currencies).map((currency) => (
+                  <option value={currency} className='uppercase'>{currency}</option>
+                ))
+                :
+                <></>
+              }
             </select>
             <input type="number" className='outline-none' />
           </div>
