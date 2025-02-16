@@ -3,10 +3,12 @@ import axios from 'axios'
 import './App.css'
 
 function App() {
-  const [currencies, setCurrencies] = useState([])
-  
-  const [currencyOne, setCurrencyOne] = useState<string>('brl')
-  const [currencyTwo, setCurrencyTwo] = useState<string>('usd')
+  const [currencies, setCurrencies] = useState<object[]>([])
+  const [currencyOne, setCurrencyOne] = useState<string>('usd')
+  const [currencyTwo, setCurrencyTwo] = useState<string>('brl')
+  const [exchange, setExchange] = useState<number>()
+  const [amount, setAmount] = useState<number>(1)
+  const [totalExchange, setTotalExchange] = useState<number>()
 
   useEffect(() => {
     axios.get(`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies.json`)
@@ -22,6 +24,20 @@ function App() {
     }else{
       setCurrencyTwo(selectedCurrency)
     }
+  }
+
+  useEffect(() => {
+    axios.get(`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${currencyOne}.json`)
+    .then(result => setExchange(result.data[currencyOne][currencyTwo]))
+  }, [currencyOne, currencyTwo])
+
+  useEffect(() => {
+    setTotalExchange(exchange * amount)
+  }, [exchange, amount])
+
+
+  const handleSetAmount = (value: number) => {
+    setAmount(value)
   }
 
   return (
@@ -44,7 +60,7 @@ function App() {
                 <></>
               }
             </select>
-            <input type="number" className='outline-none'/>
+            <input type="number" className='outline-none' value={amount} onChange={(e) => handleSetAmount(e.target.value)}/>
           </div>
         </form>
 
@@ -61,7 +77,7 @@ function App() {
                 <></>
               }
             </select>
-            <input type="number" className='outline-none'/>
+            <input type="number" className='outline-none' value={totalExchange?.toFixed(2)}/>
           </div>
 
         </form>
